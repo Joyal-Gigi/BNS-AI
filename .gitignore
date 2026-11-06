@@ -20,15 +20,5 @@ env/
 .DS_Store
 Thumbs.db
 
-# Local datasets and databases
-data/raw/*
-data/processed/*
-data/database/*
-
-# Preserve directory structure
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!data/database/.gitkeep
-
 # Logs
 *.log
