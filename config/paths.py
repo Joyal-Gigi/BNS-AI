@@ -34,3 +34,6 @@ PROCESSED_DOCUMENTS = {
     "BNSS": "BNSS2023_sections.json",
     "BSA": "BSA2023_sections.json",
 }
+
+#chunking
+CHUNKS_PATH = DATABASE_DIR / "legal_chunks.json"
