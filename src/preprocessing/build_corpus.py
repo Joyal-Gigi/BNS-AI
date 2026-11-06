@@ -53,19 +53,19 @@ def build_corpus() -> None:
     """Combine BNS, BNSS and BSA into one corpus."""
 
     all_records = []
-    all_metadata = []
 
     for act_id, filename in PROCESSED_DOCUMENTS.items():
         records = load_document(act_id, filename)
 
-        all_records.extend(records)
-        all_metadata.extend(
-            {"act_id": act_id} for _ in records
-        )
+        for record in records:
+            unified_record = {
+                "act_id": act_id,
+                **record,
+            }
+            all_records.append(unified_record)
 
     corpus = {
         "records": all_records,
-        "metadata": all_metadata,
     }
 
     DATABASE_DIR.mkdir(parents=True, exist_ok=True)
