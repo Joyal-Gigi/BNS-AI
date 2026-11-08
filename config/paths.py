@@ -37,3 +37,6 @@ PROCESSED_DOCUMENTS = {
 
 #chunking
 CHUNKS_PATH = DATABASE_DIR / "legal_chunks.json"
+
+#embeddings
+EMBEDDINGS_PATH = DATABASE_DIR / "legal_embeddings.npz"
