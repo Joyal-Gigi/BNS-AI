@@ -51,18 +51,26 @@ def load_chunks() -> list[dict]:
     return chunks
 
 
-def create_windows(text: str, tokenizer) -> list[str]:
+
+
+def create_windows(text: str, tokenizer, max_tokens: int) -> list[str]:
     # Tokenize the complete section without truncation.
-    token_ids = tokenizer.encode(
+    token_ids = tokenizer(
         text,
         add_special_tokens=False,
-    )
+        truncation=False,
+        verbose=False,
+    )["input_ids"]
 
+    # Reserve space for special tokens added by the model.
+    special_tokens = tokenizer.num_special_tokens_to_add(pair=False)
+    content_limit = max_tokens - special_tokens
+
+    step = content_limit - WINDOW_OVERLAP
     windows = []
-    step = MAX_TOKENS - WINDOW_OVERLAP
 
     for start in range(0, len(token_ids), step):
-        window_ids = token_ids[start:start + MAX_TOKENS]
+        window_ids = token_ids[start:start + content_limit]
 
         if not window_ids:
             break
@@ -75,10 +83,11 @@ def create_windows(text: str, tokenizer) -> list[str]:
 
         windows.append(window_text)
 
-        if start + MAX_TOKENS >= len(token_ids):
+        if start + content_limit >= len(token_ids):
             break
 
     return windows
+
 
 
 def generate_embeddings(chunks: list[dict]) -> None:
@@ -102,7 +111,11 @@ def generate_embeddings(chunks: list[dict]) -> None:
         chunk_id = chunk["chunk_id"]
         text = chunk["text"]
 
-        windows = create_windows(text, model.tokenizer)
+        windows = create_windows(
+                text,
+                model.tokenizer,
+                model.max_seq_length,
+            )
 
         if len(windows) > 1:
             oversized_sections += 1
